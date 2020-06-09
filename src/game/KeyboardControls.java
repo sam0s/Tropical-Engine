@@ -55,22 +55,22 @@ public class KeyboardControls implements KeyListener {
 				break;
 			case LARROW:
 			case KEY_A:
-				StateGame.character=StateGame.playerLeft;
+				s.setPlayerAnim(StateGame.playerLeft);
 				s.move_target(-1,0);
 				break;
 			case RARROW:
 			case KEY_D:
-				StateGame.character=StateGame.playerRight;
+				s.setPlayerAnim(StateGame.playerRight);
 				s.move_target(1,0);
 				break;
 			case UPARROW:
 			case KEY_W:
-				StateGame.character=StateGame.playerUp;
+				s.setPlayerAnim(StateGame.playerUp);
 				s.move_target(0,-1);
 				break;
 			case DWNARROW:
 			case KEY_S:
-				StateGame.character=StateGame.playerDown;
+				s.setPlayerAnim(StateGame.playerDown);
 				s.move_target(0,1);
 				break;
 			}
