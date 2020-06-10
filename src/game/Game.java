@@ -14,11 +14,6 @@ public class Game extends StateBasedGame {
 
 	// Add more of these when there are more states
 	public static final int GAME = 0;
-	public static final int GLOBE = 1;
-
-	// don't take this personally
-	public static final boolean MALE = true;
-	public static final boolean FEMALE = false;
 
 	// Application Properties
 
