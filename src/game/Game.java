@@ -1,4 +1,5 @@
 package game;
+
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import org.newdawn.slick.*;
@@ -16,11 +17,10 @@ public class Game extends StateBasedGame {
 	public static final int GAME = 0;
 
 	// Application Properties
+	public static final int SCALE = 4;
+	public static final int WIDTH = 256 * SCALE;
+	public static final int HEIGHT = 240 * SCALE;
 
-	public static final int WIDTH = 256*4;
-	public static final int HEIGHT = 240*4;
-
-	public static final int MENU_BAR_HEIGHT = 68;
 	public static final int FPS = 60;
 	public static final Color win_inner = new Color(40, 40, 40, 225);
 	public static final Color win_outer = Color.orange;
@@ -31,7 +31,7 @@ public class Game extends StateBasedGame {
 
 	public void initStatesList(GameContainer gc) throws SlickException {
 		this.addState(new StateGame());
-		//this.addState(new StateGlobe());
+		// this.addState(new StateGlobe());
 	}
 
 	public static void main(String[] args) {

@@ -1,6 +1,7 @@
 package game;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -114,17 +115,17 @@ public class OverworldEntity {
 
 	private void stop() throws SlickException, FileNotFoundException {
 		this.moving = false;
-
-		// A_Sub
-		if (s.cur_map[(int) ty][(int) tx] == 400) {
-			tx = s.a_hop[0];
-			ty = s.a_hop[1];
-			s.cur_map = s.loadSheet(s.a_dest, 1);
+		System.out.println(Arrays.toString(s.dests));
+		int t = s.cur_map[(int) ty][(int) tx];
+		// Sub
+		if (t >= 65 && t <= 68) {
+			tx = s.hops[t - 65][0];
+			ty = s.hops[t - 65][1];
+			s.cur_map = s.loadSheet(s.dests[t - 65], 1);
 
 		}
 
 		x = tx;
 		y = ty;
 	}
-
 }

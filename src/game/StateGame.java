@@ -23,18 +23,10 @@ public class StateGame extends BasicGameState {
 	int vp_w = Game.WIDTH;
 	int vp_h = Game.HEIGHT;
 
-	// sub-level file locations, could be expanded but 3 is plenty surely.
-	String a_dest = "";
-	String b_dest = "";
-	String c_dest = "";
-
-	int[] a_hop = { 0, 0 };
-	int[] b_hop = { 0, 0 };
-	int[] c_hop = { 0, 0 };
-
-	int a_tile = 0;
-	int b_tile = 0;
-	int c_tile = 0;
+	// lets try to make this work :)
+	String[] dests = new String[10];
+	int[][] hops = new int[10][2];
+	int[] s_tiles = new int[10];
 
 	String area = "CISLAND";
 
@@ -63,13 +55,7 @@ public class StateGame extends BasicGameState {
 	public int[][] loadSheet(String fname, int def) throws SlickException, FileNotFoundException {
 
 		// arbitrary size that will be changed later. (or maybe made dynamic) (probably not)
-		boolean A_level = false, B_level = false, C_level = false;
-		int[] aloc = { 0, 0 };
-		int[] bloc = { 0, 0 };
-		int[] cloc = { 0, 0 };
-
 		int[][] retMap = new int[32][32];
-
 		for (int i = 0, len = retMap.length; i < len; i++)
 			Arrays.fill(retMap[i], def);
 
@@ -81,12 +67,7 @@ public class StateGame extends BasicGameState {
 			while (hor_line.contains("*") == false) {
 				for (int x = 0; x < hor_line.length(); x++) {
 					int c = hor_line.charAt(x);
-					if (c == 65) {
-						c = 400;
-						aloc[0] = x;
-						aloc[1] = y;
-						A_level = true;
-					} else {
+					if ((c >= 65 && c <= 68) == false) {
 						c = char_to_id(c);
 					}
 					retMap[y][x] = c;
@@ -102,12 +83,14 @@ public class StateGame extends BasicGameState {
 				collidables[i] = a;
 			}
 
-			if (A_level) {
-				a_dest = scanner.nextLine();
+			int tn = 0;
+			while (scanner.hasNextLine()) {
+				dests[tn] = scanner.nextLine();
 				String[] hop = scanner.nextLine().split(" ");
-				a_hop[0] = Integer.parseInt(hop[0]);
-				a_hop[1] = Integer.parseInt(hop[1]);
-				a_tile = char_to_id(hop[2].charAt(0));
+				hops[tn][0] = Integer.parseInt(hop[0]);
+				hops[tn][1] = Integer.parseInt(hop[1]);
+				s_tiles[tn] = char_to_id(hop[2].charAt(0));
+				tn++;
 			}
 
 			scanner.close();
@@ -117,6 +100,7 @@ public class StateGame extends BasicGameState {
 		Scanner scanner = new Scanner(new File(area + "\\" + fname + ".lda"));
 		island = new SpriteSheet(new Image(scanner.nextLine()), 16, 16);
 		island.setFilter(Image.FILTER_NEAREST);
+		scanner.close();
 		return retMap;
 	}
 
@@ -136,7 +120,7 @@ public class StateGame extends BasicGameState {
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
-		g.scale(4, 4);
+		g.scale(Game.SCALE, Game.SCALE);
 		g.translate(vp_x, vp_y);
 
 		// Only draw what we can see in the view
@@ -146,7 +130,11 @@ public class StateGame extends BasicGameState {
 				if (i > 0 && i < cur_map.length && j > 0 && j < cur_map[0].length) {
 
 					int tile = cur_map[i][j];
-					int t = (tile == 400) ? a_tile : (tile == 500) ? b_tile : (tile == 600) ? c_tile : tile;
+					int t = tile;
+					if (tile >= 65 && tile <= 68) {
+						t = s_tiles[tile - 65];
+
+					}
 					if (t < 999) {
 						island.getSprite(t, 1).draw(j * 16, i * 16, 16, 16);
 					}
@@ -158,7 +146,7 @@ public class StateGame extends BasicGameState {
 		mike.draw(16, 16);
 
 		g.translate(-vp_x, -vp_y);
-		g.scale(0.4f, 0.4f);
+		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
 
 		g.setColor(Color.black);
 		// g.fillRect(2, 45, 1000, 100);
@@ -169,6 +157,7 @@ public class StateGame extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
+
 		try {
 			mike.update();
 		} catch (FileNotFoundException e) {
