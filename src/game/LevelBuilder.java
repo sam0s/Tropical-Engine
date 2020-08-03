@@ -9,7 +9,7 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class StateGame extends BasicGameState {
+public class LevelBuilder extends BasicGameState {
 	int[][] cur_map;
 	int[] collidables;
 	static SpriteSheet island;
@@ -27,8 +27,6 @@ public class StateGame extends BasicGameState {
 	String[] dests = new String[10];
 	int[][] hops = new int[10][2];
 	int[] s_tiles = new int[10];
-
-	OverworldEntity[] npcs = new OverworldEntity[10];
 
 	String area = "CISLAND";
 
@@ -101,32 +99,13 @@ public class StateGame extends BasicGameState {
 		}
 		Scanner scanner = new Scanner(new File(area + "\\" + fname + ".lda"));
 		island = new SpriteSheet(new Image(scanner.nextLine()), 16, 16);
-		int npn = Integer.parseInt(scanner.nextLine());
 		island.setFilter(Image.FILTER_NEAREST);
-		if (npn > 0) {
-			String np[] = scanner.nextLine().split(" ");
-			npcs[0] = new OverworldEntity(np[0], Integer.parseInt(np[1]), Integer.parseInt(np[2]), this);
-		}
 		scanner.close();
 		return retMap;
 	}
 
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
-		KeyboardControls kc = new KeyboardControls(this);
-		arg0.getInput().addKeyListener(kc);
-		try {
-			mike = new Player(20, 20, this);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			cur_map = loadSheet("cisland", 1);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 	}
 

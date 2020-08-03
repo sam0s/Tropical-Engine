@@ -1,7 +1,9 @@
 package game;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Image;
@@ -30,8 +32,11 @@ public class OverworldEntity {
 
 	}
 
-	public OverworldEntity(Image sheet, float x, float y, StateGame s) {
+	public OverworldEntity(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		this.s = s;
+		Scanner reader = new Scanner(new File("G_DATA\\"+identity + ".txt"));
+		Image sheet = new Image(reader.nextLine() + ".png");
+		reader.close();
 		sheet.setFilter(Image.FILTER_NEAREST);
 
 		SpriteSheet p = new SpriteSheet(sheet.getSubImage(0, 0, 32, 16), 16, 16, 0);
@@ -113,17 +118,8 @@ public class OverworldEntity {
 
 	}
 
-	private void stop() throws SlickException, FileNotFoundException {
+	public void stop() throws SlickException, FileNotFoundException {
 		this.moving = false;
-		System.out.println(Arrays.toString(s.dests));
-		int t = s.cur_map[(int) ty][(int) tx];
-		// Sub
-		if (t >= 65 && t <= 68) {
-			tx = s.hops[t - 65][0];
-			ty = s.hops[t - 65][1];
-			s.cur_map = s.loadSheet(s.dests[t - 65], 1);
-
-		}
 
 		x = tx;
 		y = ty;
