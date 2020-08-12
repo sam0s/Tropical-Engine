@@ -25,16 +25,9 @@ public class OverworldEntity {
 	// Calculated using real game
 	float speed = 0.063f;
 
-	public void setPlayerAnim(String pa) {
-		if (!moving) {
-			current = (pa.equals("up")) ? anUp : (pa.equals("down")) ? anDown : (pa.equals("left")) ? anLeft : anRight;
-		}
-
-	}
-
 	public OverworldEntity(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		this.s = s;
-		Scanner reader = new Scanner(new File("G_DATA\\"+identity + ".txt"));
+		Scanner reader = new Scanner(new File("G_DATA\\" + identity + ".txt"));
 		Image sheet = new Image(reader.nextLine() + ".png");
 		reader.close();
 		sheet.setFilter(Image.FILTER_NEAREST);

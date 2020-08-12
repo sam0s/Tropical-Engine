@@ -14,7 +14,7 @@ public class StateGame extends BasicGameState {
 	int[] collidables;
 	static SpriteSheet island;
 	static Animation character;
-	OverworldEntity mike;
+	Player mike;
 	// Calculated using real game
 	float speed = 0.063f;
 
@@ -54,12 +54,12 @@ public class StateGame extends BasicGameState {
 		return c;
 	}
 
-	public int[][] loadSheet(String fname, int def) throws SlickException, FileNotFoundException {
+	public int[][] loadSheet(String fname) throws SlickException, FileNotFoundException {
 
 		// arbitrary size that will be changed later. (or maybe made dynamic) (probably not)
 		int[][] retMap = new int[32][32];
 		for (int i = 0, len = retMap.length; i < len; i++)
-			Arrays.fill(retMap[i], def);
+			Arrays.fill(retMap[i], 1);
 
 		String hor_line;
 		int y = 0;
@@ -122,7 +122,7 @@ public class StateGame extends BasicGameState {
 			e1.printStackTrace();
 		}
 		try {
-			cur_map = loadSheet("cisland", 1);
+			cur_map = loadSheet("cisland");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -155,6 +155,14 @@ public class StateGame extends BasicGameState {
 
 			}
 		}
+
+		for (OverworldEntity ent : npcs) {
+			if (ent != null) {
+				ent.draw(16, 16);
+			}
+		}
+
+		
 		mike.draw(16, 16);
 
 		g.translate(-vp_x, -vp_y);

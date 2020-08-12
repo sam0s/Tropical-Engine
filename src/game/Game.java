@@ -21,8 +21,8 @@ public class Game extends StateBasedGame {
 	public static final int WIDTH = 256 * SCALE;
 	public static final int HEIGHT = 240 * SCALE;
 
-	//public static final int FPS = 60;
-	public static final int FPS = 100;
+	public static final int FPS = 60;
+	//public static final int FPS = 100;
 	public static final Color win_inner = new Color(40, 40, 40, 225);
 	public static final Color win_outer = Color.orange;
 	public static final Color clear = new Color(0, 0, 0, 0);
