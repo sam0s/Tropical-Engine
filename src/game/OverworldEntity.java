@@ -21,6 +21,8 @@ public class OverworldEntity {
 	float y;
 	float tx;
 	float ty;
+	int directionx;
+	int directiony;
 	StateGame s;
 	// Calculated using real game
 	float speed = 0.063f;
@@ -56,25 +58,36 @@ public class OverworldEntity {
 	}
 
 	public void draw(int sx, int sy) {
-		current.draw(x * 16, y * 16, sx, sy);
-
+		current.draw(x * 32, y * 32, sx, sy);
 	}
 
 	public void move_target(int movx, int movy) {
+		this.directionx = movx;
+		this.directiony = movy;
 		if (this.moving == false) {
+			boolean whack = false;
 			if (tx >= 0 && ty >= 0) {
-				if (s.collision(s.cur_map[(int) ty + movy][(int) tx + movx]) == false) {
+				for (OverworldEntity d : StateGame.npcs) {
+					if (d != null) {
+						int[] d1 = new int[] { (int) d.x, (int) d.y };
+						System.out.println("(" + d1[0] + ", " + d1[1] + "),");
+						if (d1[0] == (int) tx + movx && d1[1] == (int) ty + movy) {
+							whack = true;
+						}
+					}
+				}
+
+				if (s.collision(s.cur_map[(int) ty + movy][(int) tx + movx]) == false && !whack) {
 					this.moving = true;
 					tx += movx;
 					ty += movy;
-
 					System.out.println();
 				}
 			}
 		}
 	}
 
-	public void update() throws SlickException, FileNotFoundException {
+	public void updateMovement() throws FileNotFoundException, SlickException {
 		if (x != tx || y != ty) {
 			if (x < tx) {
 				x += speed;
@@ -108,7 +121,10 @@ public class OverworldEntity {
 
 			}
 		}
+	}
 
+	public void update() throws SlickException, FileNotFoundException {
+		updateMovement();
 	}
 
 	public void stop() throws SlickException, FileNotFoundException {

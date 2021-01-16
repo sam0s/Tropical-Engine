@@ -17,9 +17,9 @@ public class Game extends StateBasedGame {
 	public static final int GAME = 0;
 
 	// Application Properties
-	public static final int SCALE = 4;
-	public static final int WIDTH = 256 * SCALE;
-	public static final int HEIGHT = 240 * SCALE;
+	public static final int SCALE = 2;
+	public static final int WIDTH = 1280; //* SCALE;
+	public static final int HEIGHT = 720; //* SCALE;
 
 	public static final int FPS = 60;
 	//public static final int FPS = 100;

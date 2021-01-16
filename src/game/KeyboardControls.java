@@ -22,11 +22,20 @@ public class KeyboardControls implements KeyListener {
 	static final int DWNARROW = 208;
 	static final int LCTRL = 29;
 	static final int RCTRL = 157;
-
+	
+	static final int KEY_SPACE = 57;
+	static final int KEY_ESC = 1;
 	static final int KEY_W = 17;
 	static final int KEY_A = 30;
 	static final int KEY_S = 31;
 	static final int KEY_D = 32;
+	
+	static final int up_bind = KEY_W;
+	static final int down_bind = KEY_S;
+	static final int left_bind = KEY_A;
+	static final int right_bind = KEY_D;
+	static final int action_bind = KEY_SPACE;
+	static final int back_bind = KEY_ESC;
 
 	public KeyboardControls(StateGame s) {
 		this.s = s;
@@ -53,25 +62,24 @@ public class KeyboardControls implements KeyListener {
 			switch (k) {
 			case 1: /* escape */
 				break;
-			case LARROW:
-			case KEY_A:
-				s.mike.setPlayerAnim("left");
-				s.mike.move_target(-1, 0);
+			case left_bind:
+				StateGame.mike.setPlayerAnim("left");
+				StateGame.mike.move_target(-1, 0);
 				break;
-			case RARROW:
-			case KEY_D:
-				s.mike.setPlayerAnim("right");
-				s.mike.move_target(1, 0);
+			case right_bind:
+				StateGame.mike.setPlayerAnim("right");
+				StateGame.mike.move_target(1, 0); 
 				break;
-			case UPARROW:
-			case KEY_W:
-				s.mike.setPlayerAnim("up");
-				s.mike.move_target(0, -1);
+			case up_bind:
+				StateGame.mike.setPlayerAnim("up");
+				StateGame.mike.move_target(0, -1);
 				break;
-			case DWNARROW:
-			case KEY_S:
-				s.mike.setPlayerAnim("down");
-				s.mike.move_target(0, 1);
+			case down_bind:
+				StateGame.mike.setPlayerAnim("down");
+				StateGame.mike.move_target(0, 1);
+				break;
+			case action_bind:
+				StateGame.mike.action();
 				break;
 			}
 		}

@@ -2,7 +2,9 @@ package game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import org.newdawn.slick.*;
@@ -11,10 +13,11 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class StateGame extends BasicGameState {
 	int[][] cur_map;
-	int[] collidables;
+	static int[] collidables;
 	static SpriteSheet island;
 	static Animation character;
-	Player mike;
+	static Image alert;
+	static Player mike;
 	// Calculated using real game
 	float speed = 0.063f;
 
@@ -23,12 +26,13 @@ public class StateGame extends BasicGameState {
 	int vp_w = Game.WIDTH;
 	int vp_h = Game.HEIGHT;
 
+
 	// lets try to make this work :)
 	String[] dests = new String[10];
 	int[][] hops = new int[10][2];
 	int[] s_tiles = new int[10];
 
-	OverworldEntity[] npcs = new OverworldEntity[10];
+	static NPC[] npcs = new NPC[10];
 
 	String area = "CISLAND";
 
@@ -58,8 +62,10 @@ public class StateGame extends BasicGameState {
 
 		// arbitrary size that will be changed later. (or maybe made dynamic) (probably not)
 		int[][] retMap = new int[32][32];
-		for (int i = 0, len = retMap.length; i < len; i++)
+		npcs = new NPC[10];
+		for (int i = 0, len = retMap.length; i < len; i++) {
 			Arrays.fill(retMap[i], 1);
+		}
 
 		String hor_line;
 		int y = 0;
@@ -100,12 +106,12 @@ public class StateGame extends BasicGameState {
 			e.printStackTrace();
 		}
 		Scanner scanner = new Scanner(new File(area + "\\" + fname + ".lda"));
-		island = new SpriteSheet(new Image(scanner.nextLine()), 16, 16);
+		island = new SpriteSheet(new Image(scanner.nextLine()), 32, 32);
 		int npn = Integer.parseInt(scanner.nextLine());
 		island.setFilter(Image.FILTER_NEAREST);
 		if (npn > 0) {
 			String np[] = scanner.nextLine().split(" ");
-			npcs[0] = new OverworldEntity(np[0], Integer.parseInt(np[1]), Integer.parseInt(np[2]), this);
+			npcs[0] = new NPC(np[0], Integer.parseInt(np[1]), Integer.parseInt(np[2]), this);
 		}
 		scanner.close();
 		return retMap;
@@ -113,16 +119,17 @@ public class StateGame extends BasicGameState {
 
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		alert = new Image("noti.png");
 		KeyboardControls kc = new KeyboardControls(this);
 		arg0.getInput().addKeyListener(kc);
 		try {
-			mike = new Player(20, 20, this);
+			mike = new Player(20, 18, this);
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
-			cur_map = loadSheet("cisland");
+			cur_map = loadSheet("testarea");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,8 +144,8 @@ public class StateGame extends BasicGameState {
 
 		// Only draw what we can see in the view
 
-		for (int i = (int) (mike.y - 7); i < (int) mike.y + 8.5; i++) {
-			for (int j = (int) (mike.x - 7.5); j < (int) mike.x + 9.5; j++) {
+		for (int i = (int) (mike.y - 6); i < (int) mike.y + 7.5; i++) {
+			for (int j = (int) (mike.x - 10.4); j < (int) mike.x + 11.5; j++) {
 				if (i > 0 && i < cur_map.length && j > 0 && j < cur_map[0].length) {
 
 					int tile = cur_map[i][j];
@@ -148,7 +155,7 @@ public class StateGame extends BasicGameState {
 
 					}
 					if (t < 999) {
-						island.getSprite(t, 1).draw(j * 16, i * 16, 16, 16);
+						island.getSprite(t, 1).draw(j * 32, i * 32, 32, 32);
 					}
 					// g.drawString(String.valueOf(cur_map[i][j]), j * 16, i * 16);
 				}
@@ -158,12 +165,11 @@ public class StateGame extends BasicGameState {
 
 		for (OverworldEntity ent : npcs) {
 			if (ent != null) {
-				ent.draw(16, 16);
+				ent.draw(32, 32);
 			}
 		}
 
-		
-		mike.draw(16, 16);
+		mike.draw(32, 32);
 
 		g.translate(-vp_x, -vp_y);
 		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
@@ -178,14 +184,26 @@ public class StateGame extends BasicGameState {
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
 
+		// could be a better way to do this? (move this to level load will work but do it later)
+		for (OverworldEntity ent : npcs) {
+			if (ent != null) {
+				try {
+					ent.update();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 		try {
 			mike.update();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		vp_x = 120 - (mike.x * 16);
-		vp_y = 111 - (mike.y * 16);
+
+		vp_x = 190 + 120 - (mike.x * 32);
+		vp_y = 50 + 111 - (mike.y * 32);
 
 	}
 
