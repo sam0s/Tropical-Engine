@@ -48,7 +48,7 @@ public class Player extends OverworldEntity {
 			for (NPC d : StateGame.npcs) {
 				if (d != null) {
 					if (d.alert == 1) {
-
+						StateGame.currentPortrait = d.portrait;
 						StateGame.currentText = d.textList[d.state];
 						d.state++;
 					}
@@ -56,8 +56,30 @@ public class Player extends OverworldEntity {
 				}
 			}
 		} else {
-			StateGame.currentText = StateGame.nextText;
+
+			if (StateGame.textCursor < StateGame.currentText.length()) {
+
+				//fast forward text
+				for (int i = (int) StateGame.textCursor; i < StateGame.currentText.length(); i++) {
+					if (StateGame.currentText.charAt(i) == '&') {
+						StateGame.textCursor = i - 1;
+						return;
+					}
+				}
+				StateGame.textCursor = StateGame.currentText.length();
+				return;
+			}
+			
+			//reset cursor
 			StateGame.textCursor = 0;
+
+			//close text box
+			if (StateGame.currentText.equals(StateGame.nextText)) {
+				StateGame.nextText = "";
+			}
+			
+			//move to next text segment!
+			StateGame.currentText = StateGame.nextText;
 
 		}
 

@@ -1,7 +1,9 @@
 package game;
 
+import java.awt.FontFormatException;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,16 +18,19 @@ public class StateGame extends BasicGameState {
 	static int[] collidables;
 	static SpriteSheet island;
 	static Animation character;
-	static Image alert;
 	static Player mike;
-	
-	
-	
-	
-	static String currentText="";
-	static float textCursor=0;
-	static String nextText="";
-	static double textSpeed = 0.5;
+
+	static String currentText = "";
+	static float textCursor = 0;
+	static String nextText = "";
+	static double textSpeed = 0.3;
+
+	java.awt.Font fontRaw = null;
+	public static Font f_32, f_18, f_24, f_16, f_14;
+
+	static Image textBorder;
+	static Image alert;
+
 	// Calculated using real game
 	float speed = 0.063f;
 
@@ -34,15 +39,34 @@ public class StateGame extends BasicGameState {
 	int vp_w = Game.WIDTH;
 	int vp_h = Game.HEIGHT;
 
-
 	// lets try to make this work :)
 	String[] dests = new String[10];
 	int[][] hops = new int[10][2];
 	int[] s_tiles = new int[10];
 
 	static NPC[] npcs = new NPC[10];
+	public static Image currentPortrait;
+	public static Image currentPortraitBack;
 
 	String area = "CISLAND";
+
+	public void init_fonts() {
+		try {
+			fontRaw = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new java.io.File("TerminusTTF-Bold-4.47.0.ttf"));
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+		}
+
+		if (fontRaw == null) {
+			fontRaw = new java.awt.Font("Default", 0, 28);
+		}
+
+		f_32 = new TrueTypeFont(fontRaw.deriveFont(32f), false);
+		f_24 = new TrueTypeFont(fontRaw.deriveFont(24f), false);
+		f_18 = new TrueTypeFont(fontRaw.deriveFont(18f), false);
+		f_16 = new TrueTypeFont(fontRaw.deriveFont(16f), false);
+		f_14 = new TrueTypeFont(fontRaw.deriveFont(14f), false);
+	}
 
 	public boolean collision(int c) {
 		for (int i = 0; i < collidables.length; i++) {
@@ -125,9 +149,17 @@ public class StateGame extends BasicGameState {
 		return retMap;
 	}
 
+	// ***********************************************************
+	// ***********************************************************
+	// INIT INIT INIT INIT INIT INIT INIT
+	// ***********************************************************
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		init_fonts();
 		alert = new Image("noti.png");
+		currentPortrait = new Image("gfx\\por_mike.png");
+		textBorder = new Image("gfx\\ropeborder.png");
+		currentPortraitBack = new Image("gfx\\porback_desert.png");
 		KeyboardControls kc = new KeyboardControls(this);
 		arg0.getInput().addKeyListener(kc);
 		try {
@@ -144,6 +176,9 @@ public class StateGame extends BasicGameState {
 		}
 
 	}
+
+	// ***********************************************************
+	// ***********************************************************
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
@@ -175,21 +210,38 @@ public class StateGame extends BasicGameState {
 				ent.draw(32, 32);
 			}
 		}
-		
-		
 
 		mike.draw(32, 32);
 
 		g.translate(-vp_x, -vp_y);
-		if (currentText.length()>0){
-			g.setColor(Color.black);
-			g.fillRect(10, 220, 620, 120);
-			g.setColor(Color.white);
-			if(textCursor<currentText.length()){textCursor+=textSpeed;}
-			g.drawString(currentText.substring(0, (int)textCursor),40,225);
-		}
-		
 		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
+
+		if (currentText.length() > 0) {
+			g.setColor(Color.black);
+			g.fillRect(20, 440, 1240, 240);
+			g.setColor(Color.white);
+			if (textCursor < currentText.length()) {
+
+				if (currentText.charAt((int) textCursor) == '&') {
+					nextText = currentText.substring((int) textCursor + 1);
+					currentText = currentText.substring(0, (int) textCursor);
+					System.out.println(currentText);
+					System.out.println(nextText);
+					textCursor = currentText.length();
+				}
+				textCursor += textSpeed;
+			}
+
+			currentPortraitBack.draw(76, 473);
+			if (currentText.charAt(0) == ' ') {
+				mike.portrait.draw(76, 473);
+			} else {
+				currentPortrait.draw(76, 473);
+			}
+			textBorder.draw(7, 430);
+			g.setFont(f_32);
+			g.drawString(currentText.substring(0, (int) textCursor), 245, 465);
+		}
 
 		g.setColor(Color.black);
 		// g.fillRect(2, 45, 1000, 100);

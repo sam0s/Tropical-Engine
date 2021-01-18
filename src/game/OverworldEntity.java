@@ -16,6 +16,7 @@ public class OverworldEntity {
 	Animation anLeft;
 	Animation anRight;
 	Animation current;
+	Image portrait;
 	boolean moving = false;
 	float x;
 	float y;
@@ -33,6 +34,7 @@ public class OverworldEntity {
 
 		// LOAD NPC DATA
 		Scanner reader = new Scanner(new File("G_DATA\\" + identity + ".txt"));
+		portrait = new Image("gfx\\por_"+identity + ".png");
 		Image sheet = new Image(reader.nextLine() + ".png");
 		int index = 0;
 		String line = "";
