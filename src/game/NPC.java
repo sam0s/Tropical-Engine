@@ -5,13 +5,13 @@ import java.io.FileNotFoundException;
 import org.newdawn.slick.SlickException;
 
 public class NPC extends OverworldEntity {
+	int state = 0;
 	String text;
-	int state;
 	int alert = 0;
 
 	public NPC(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		super(identity, x, y, s);
-		this.text="Hi there I am deborah.";
+		this.text = textList[state];
 	}
 
 	@Override

@@ -40,18 +40,26 @@ public class Player extends OverworldEntity {
 
 		x = tx;
 		y = ty;
+
 	}
 
 	public void action() {
-		for (NPC d : StateGame.npcs) {
-			if (d != null) {
-				if(d.alert==1){
-					System.out.println(d.text);
+		if (StateGame.currentText.length() == 0) {
+			for (NPC d : StateGame.npcs) {
+				if (d != null) {
+					if (d.alert == 1) {
+
+						StateGame.currentText = d.textList[d.state];
+						d.state++;
+					}
+
 				}
-			
 			}
+		} else {
+			StateGame.currentText = StateGame.nextText;
+			StateGame.textCursor = 0;
+
 		}
-		
-		
+
 	}
 }

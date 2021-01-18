@@ -18,6 +18,14 @@ public class StateGame extends BasicGameState {
 	static Animation character;
 	static Image alert;
 	static Player mike;
+	
+	
+	
+	
+	static String currentText="";
+	static float textCursor=0;
+	static String nextText="";
+	static double textSpeed = 0.5;
 	// Calculated using real game
 	float speed = 0.063f;
 
@@ -143,7 +151,6 @@ public class StateGame extends BasicGameState {
 		g.translate(vp_x, vp_y);
 
 		// Only draw what we can see in the view
-
 		for (int i = (int) (mike.y - 6); i < (int) mike.y + 7.5; i++) {
 			for (int j = (int) (mike.x - 10.4); j < (int) mike.x + 11.5; j++) {
 				if (i > 0 && i < cur_map.length && j > 0 && j < cur_map[0].length) {
@@ -168,10 +175,20 @@ public class StateGame extends BasicGameState {
 				ent.draw(32, 32);
 			}
 		}
+		
+		
 
 		mike.draw(32, 32);
 
 		g.translate(-vp_x, -vp_y);
+		if (currentText.length()>0){
+			g.setColor(Color.black);
+			g.fillRect(10, 220, 620, 120);
+			g.setColor(Color.white);
+			if(textCursor<currentText.length()){textCursor+=textSpeed;}
+			g.drawString(currentText.substring(0, (int)textCursor),40,225);
+		}
+		
 		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
 
 		g.setColor(Color.black);

@@ -23,14 +23,23 @@ public class OverworldEntity {
 	float ty;
 	int directionx;
 	int directiony;
+	String[] textList = new String[20];
 	StateGame s;
 	// Calculated using real game
 	float speed = 0.063f;
 
 	public OverworldEntity(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		this.s = s;
+
+		// LOAD NPC DATA
 		Scanner reader = new Scanner(new File("G_DATA\\" + identity + ".txt"));
 		Image sheet = new Image(reader.nextLine() + ".png");
+		int index = 0;
+		String line = "";
+		while (line.contains("*") == false) {
+			line = reader.nextLine();
+			textList[index++] = line;
+		}
 		reader.close();
 		sheet.setFilter(Image.FILTER_NEAREST);
 
@@ -62,26 +71,31 @@ public class OverworldEntity {
 	}
 
 	public void move_target(int movx, int movy) {
-		this.directionx = movx;
-		this.directiony = movy;
-		if (this.moving == false) {
-			boolean whack = false;
-			if (tx >= 0 && ty >= 0) {
-				for (OverworldEntity d : StateGame.npcs) {
-					if (d != null) {
-						int[] d1 = new int[] { (int) d.x, (int) d.y };
-						System.out.println("(" + d1[0] + ", " + d1[1] + "),");
-						if (d1[0] == (int) tx + movx && d1[1] == (int) ty + movy) {
-							whack = true;
+		if (StateGame.currentText.length() == 0) {
+			if (moving == false) {
+				current = (movx == 0 && movy == -1) ? anUp : (movx == 0 && movy == 1) ? anDown : (movx == -1 && movy == 0) ? anLeft : anRight;
+			}
+			this.directionx = movx;
+			this.directiony = movy;
+			if (this.moving == false) {
+				boolean whack = false;
+				if (tx >= 0 && ty >= 0) {
+					for (OverworldEntity d : StateGame.npcs) {
+						if (d != null) {
+							int[] d1 = new int[] { (int) d.x, (int) d.y };
+							System.out.println("(" + d1[0] + ", " + d1[1] + "),");
+							if (d1[0] == (int) tx + movx && d1[1] == (int) ty + movy) {
+								whack = true;
+							}
 						}
 					}
-				}
 
-				if (s.collision(s.cur_map[(int) ty + movy][(int) tx + movx]) == false && !whack) {
-					this.moving = true;
-					tx += movx;
-					ty += movy;
-					System.out.println();
+					if (s.collision(s.cur_map[(int) ty + movy][(int) tx + movx]) == false && !whack) {
+						this.moving = true;
+						tx += movx;
+						ty += movy;
+						System.out.println();
+					}
 				}
 			}
 		}
@@ -124,7 +138,10 @@ public class OverworldEntity {
 	}
 
 	public void update() throws SlickException, FileNotFoundException {
-		updateMovement();
+		// later change this to a variable that locks movement for other cases such as animations or "cutscenes"
+		if (StateGame.currentText.length() == 0) {
+			updateMovement();
+		}
 	}
 
 	public void stop() throws SlickException, FileNotFoundException {
