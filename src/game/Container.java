@@ -67,8 +67,8 @@ public class Container {
 		this.y = y;
 		this.padx = padx;
 		this.pady = pady;
-		this.inner = Game.win_inner;
-		this.outer = Game.win_outer;
+		this.inner = StateGame.win_inner;
+		this.outer = StateGame.win_outer;
 		this.weight = (float) weight;
 		this.containers = new Vector<Container>();
 		this.relx = x;

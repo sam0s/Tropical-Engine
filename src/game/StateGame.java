@@ -14,6 +14,7 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 public class StateGame extends BasicGameState {
+	public static Enemy currentEnemy = null;
 	int[][] cur_map;
 	static int[] collidables;
 	static SpriteSheet island;
@@ -29,7 +30,11 @@ public class StateGame extends BasicGameState {
 	public static Font f_32, f_18, f_24, f_16, f_14;
 
 	static Image textBorder;
+	static Image combatBorder;
 	static Image alert;
+
+	static HorzBarGraph enemyHealth;
+	static HorzBarGraph playerHealth;
 
 	// Calculated using real game
 	float speed = 0.063f;
@@ -48,6 +53,10 @@ public class StateGame extends BasicGameState {
 	public static Image currentPortrait;
 	public static Image currentPortraitBack;
 
+	public static final int MENU_BAR_HEIGHT = 68;
+	public static final Color win_inner = new Color(40, 40, 40, 225);
+	public static final Color win_outer = Color.orange;
+	public static final Color clear = new Color(0, 0, 0, 0);
 	String area = "CISLAND";
 
 	public void init_fonts() {
@@ -75,6 +84,46 @@ public class StateGame extends BasicGameState {
 			}
 		}
 		return false;
+	}
+
+	public void drawDialog(Graphics g) {
+		g.setColor(Color.black);
+		g.fillRect(20, 440, 1240, 240);
+		g.setColor(Color.white);
+		if (textCursor < currentText.length()) {
+
+			if (currentText.charAt((int) textCursor) == '&') {
+				nextText = currentText.substring((int) textCursor + 1);
+				currentText = currentText.substring(0, (int) textCursor);
+				System.out.println(currentText);
+				System.out.println(nextText);
+				textCursor = currentText.length();
+			}
+			textCursor += textSpeed;
+		}
+		currentPortraitBack.draw(76, 473);
+		if (currentText.charAt(0) == ' ') {
+			mike.portrait.draw(76, 473);
+		} else {
+			currentPortrait.draw(76, 473);
+		}
+		textBorder.draw(7, 430);
+		g.setFont(f_32);
+		g.drawString(currentText.substring(0, (int) textCursor), 245, 465);
+	}
+
+	public void drawCombat(Graphics g) {
+		g.setColor(Color.black);
+		g.fillRect(45, 45, 1190, 630);
+		currentEnemy.draw(g);
+		g.setColor(Color.white);
+		g.setFont(StateGame.f_32);
+		g.drawString("Blind Willie", 400, 370);
+		mike.portrait.draw(50, 200);
+		g.fillRect(65, 500, 1150, 170);
+		combatBorder.draw(35, 32);
+		enemyHealth.draw(g);
+		g.setColor(Color.white);
 	}
 
 	public int char_to_id(int c) {
@@ -159,8 +208,14 @@ public class StateGame extends BasicGameState {
 		alert = new Image("noti.png");
 		currentPortrait = new Image("gfx\\por_mike.png");
 		textBorder = new Image("gfx\\ropeborder.png");
+		combatBorder = new Image("gfx\\ropeborder_combat.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
+		//currentEnemy = new Enemy(1);
 		KeyboardControls kc = new KeyboardControls(this);
+
+		enemyHealth = new HorzBarGraph(200, 32, 150, 100, 2, f_16);
+		playerHealth = new HorzBarGraph(32, 100, 32, 32, 2, f_16);
+
 		arg0.getInput().addKeyListener(kc);
 		try {
 			mike = new Player(20, 18, this);
@@ -216,37 +271,16 @@ public class StateGame extends BasicGameState {
 		g.translate(-vp_x, -vp_y);
 		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
 
-		if (currentText.length() > 0) {
-			g.setColor(Color.black);
-			g.fillRect(20, 440, 1240, 240);
-			g.setColor(Color.white);
-			if (textCursor < currentText.length()) {
+		if (currentEnemy != null) {
+			drawCombat(g);
 
-				if (currentText.charAt((int) textCursor) == '&') {
-					nextText = currentText.substring((int) textCursor + 1);
-					currentText = currentText.substring(0, (int) textCursor);
-					System.out.println(currentText);
-					System.out.println(nextText);
-					textCursor = currentText.length();
-				}
-				textCursor += textSpeed;
-			}
-
-			currentPortraitBack.draw(76, 473);
-			if (currentText.charAt(0) == ' ') {
-				mike.portrait.draw(76, 473);
-			} else {
-				currentPortrait.draw(76, 473);
-			}
-			textBorder.draw(7, 430);
-			g.setFont(f_32);
-			g.drawString(currentText.substring(0, (int) textCursor), 245, 465);
 		}
 
-		g.setColor(Color.black);
-		// g.fillRect(2, 45, 1000, 100);
-		g.setColor(Color.white);
-		g.drawString(String.format("px: %f , py: %f  | tx: %f , ty: %f", mike.x, mike.y, mike.tx, mike.ty), 2, 50);
+		if (currentText.length() > 0) {
+			drawDialog(g);
+		}
+
+		// g.drawString(String.format("px: %f , py: %f  | tx: %f , ty: %f", mike.x, mike.y, mike.tx, mike.ty), 2, 50);
 
 	}
 

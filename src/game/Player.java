@@ -12,9 +12,15 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.state.transition.Transition;
 
 public class Player extends OverworldEntity {
+	int hp = 5;
+	Image combat_portrait;
 
+	
+	
 	public Player(float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		super("mike", x, y, s);
+		this.combat_portrait = new Image("gfx\\enemysprites\\mike.png");
+		
 	}
 
 	public void setPlayerAnim(String pa) {
@@ -59,7 +65,7 @@ public class Player extends OverworldEntity {
 
 			if (StateGame.textCursor < StateGame.currentText.length()) {
 
-				//fast forward text
+				// fast forward text
 				for (int i = (int) StateGame.textCursor; i < StateGame.currentText.length(); i++) {
 					if (StateGame.currentText.charAt(i) == '&') {
 						StateGame.textCursor = i - 1;
@@ -69,16 +75,16 @@ public class Player extends OverworldEntity {
 				StateGame.textCursor = StateGame.currentText.length();
 				return;
 			}
-			
-			//reset cursor
+
+			// reset cursor
 			StateGame.textCursor = 0;
 
-			//close text box
+			// close text box
 			if (StateGame.currentText.equals(StateGame.nextText)) {
 				StateGame.nextText = "";
 			}
-			
-			//move to next text segment!
+
+			// move to next text segment!
 			StateGame.currentText = StateGame.nextText;
 
 		}

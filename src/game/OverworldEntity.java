@@ -34,7 +34,7 @@ public class OverworldEntity {
 
 		// LOAD NPC DATA
 		Scanner reader = new Scanner(new File("G_DATA\\" + identity + ".txt"));
-		portrait = new Image("gfx\\por_"+identity + ".png");
+		portrait = new Image("gfx\\por_" + identity + ".png");
 		Image sheet = new Image(reader.nextLine() + ".png");
 		int index = 0;
 		String line = "";
@@ -45,19 +45,19 @@ public class OverworldEntity {
 		reader.close();
 		sheet.setFilter(Image.FILTER_NEAREST);
 
-		SpriteSheet p = new SpriteSheet(sheet.getSubImage(0, 0, 32, 16), 16, 16, 0);
+		SpriteSheet p = new SpriteSheet(sheet.getSubImage(0,0,64,32), 32, 32, 0);
 		anRight = new Animation(p, 1);
 		anRight.setSpeed((float) 0.003);
 
-		p = new SpriteSheet(sheet.getSubImage(32, 0, 32, 16), 16, 16, 0);
+		p = new SpriteSheet(sheet.getSubImage(64, 0, 64, 32), 32, 32, 0);
 		anDown = new Animation(p, 1);
 		anDown.setSpeed((float) 0.003);
 
-		p = new SpriteSheet(sheet.getSubImage(64, 0, 32, 16), 16, 16, 0);
+		p = new SpriteSheet(sheet.getSubImage(128, 0, 64, 32), 32, 32, 0);
 		anLeft = new Animation(p, 1);
 		anLeft.setSpeed((float) 0.003);
 
-		p = new SpriteSheet(sheet.getSubImage(96, 0, 32, 16), 16, 16, 0);
+		p = new SpriteSheet(sheet.getSubImage(192, 0, 64, 32), 32, 32, 0);
 		anUp = new Animation(p, 1);
 		anUp.setSpeed((float) 0.003);
 
