@@ -29,6 +29,31 @@ public class OverworldEntity {
 	// Calculated using real game
 	float speed = 0.063f;
 
+	public static String wordWrap(String input, int linemax, int cutoff) {
+		String line = input;
+		String returnLine = input;
+		int y = 0;
+		int cursor = 0;
+		int offset = 0;
+		for (int i = 0; i < line.length(); i++) {
+			System.out.println(line.charAt(i) + " vs " + cursor);
+			if (line.charAt(i) == '&') {
+				cursor = 0;
+			}
+			if (cursor > linemax) {
+				if (line.charAt(i) == ' ' || cursor > linemax + cutoff) {
+
+					returnLine = StateGame.addChar(returnLine, '\n', (i + offset)+1);
+					offset += 1;
+					y += 1;
+					cursor = 0;
+				}
+			}
+			cursor++;
+		}
+		return returnLine;
+	}
+
 	public OverworldEntity(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		this.s = s;
 
@@ -40,12 +65,13 @@ public class OverworldEntity {
 		String line = "";
 		while (line.contains("*") == false) {
 			line = reader.nextLine();
+			line = wordWrap(line, 55,5);
 			textList[index++] = line;
 		}
 		reader.close();
 		sheet.setFilter(Image.FILTER_NEAREST);
 
-		SpriteSheet p = new SpriteSheet(sheet.getSubImage(0,0,64,32), 32, 32, 0);
+		SpriteSheet p = new SpriteSheet(sheet.getSubImage(0, 0, 64, 32), 32, 32, 0);
 		anRight = new Animation(p, 1);
 		anRight.setSpeed((float) 0.003);
 

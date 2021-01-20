@@ -24,10 +24,11 @@ public class StateGame extends BasicGameState {
 	static String currentText = "";
 	static float textCursor = 0;
 	static String nextText = "";
-	static double textSpeed = 0.3;
+	static double textSpeed = 0.5;
 
 	java.awt.Font fontRaw = null;
 	public static Font f_32, f_18, f_24, f_16, f_14;
+	public TrueTypeFont f_tt;
 
 	static Image textBorder;
 	static Image combatBorder;
@@ -58,7 +59,11 @@ public class StateGame extends BasicGameState {
 	public static final Color win_outer = Color.orange;
 	public static final Color clear = new Color(0, 0, 0, 0);
 	String area = "CISLAND";
-
+	
+	public static String addChar(String str, char ch, int position) {
+	    return str.substring(0, position) + ch + str.substring(position);
+	}
+	
 	public void init_fonts() {
 		try {
 			fontRaw = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new java.io.File("TerminusTTF-Bold-4.47.0.ttf"));
@@ -70,11 +75,12 @@ public class StateGame extends BasicGameState {
 			fontRaw = new java.awt.Font("Default", 0, 28);
 		}
 
-		f_32 = new TrueTypeFont(fontRaw.deriveFont(32f), false);
-		f_24 = new TrueTypeFont(fontRaw.deriveFont(24f), false);
-		f_18 = new TrueTypeFont(fontRaw.deriveFont(18f), false);
-		f_16 = new TrueTypeFont(fontRaw.deriveFont(16f), false);
-		f_14 = new TrueTypeFont(fontRaw.deriveFont(14f), false);
+		f_tt = new TrueTypeFont(fontRaw.deriveFont(32f), true);
+		f_32 = new TrueTypeFont(fontRaw.deriveFont(32f), true);
+		f_24 = new TrueTypeFont(fontRaw.deriveFont(24f), true);
+		f_18 = new TrueTypeFont(fontRaw.deriveFont(18f), true);
+		f_16 = new TrueTypeFont(fontRaw.deriveFont(16f), true);
+		f_14 = new TrueTypeFont(fontRaw.deriveFont(14f), true);
 	}
 
 	public boolean collision(int c) {
@@ -108,8 +114,8 @@ public class StateGame extends BasicGameState {
 			currentPortrait.draw(76, 473);
 		}
 		textBorder.draw(7, 430);
-		g.setFont(f_32);
-		g.drawString(currentText.substring(0, (int) textCursor), 245, 465);
+
+		f_32.drawString(246, 470, currentText.substring(0, (int) textCursor));
 	}
 
 	public void drawCombat(Graphics g) {
@@ -210,7 +216,7 @@ public class StateGame extends BasicGameState {
 		textBorder = new Image("gfx\\ropeborder.png");
 		combatBorder = new Image("gfx\\ropeborder_combat.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
-		//currentEnemy = new Enemy(1);
+		// currentEnemy = new Enemy(1);
 		KeyboardControls kc = new KeyboardControls(this);
 
 		enemyHealth = new HorzBarGraph(200, 32, 150, 100, 2, f_16);
