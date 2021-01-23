@@ -9,14 +9,19 @@ import org.newdawn.slick.Input;
 
 //written by jdedmondt
 
-public class HorzBarGraph extends Container {
+public class HorzBarGraph {
 
 	float percent;
 	String label;
 	Font f;
+	private float weight;
+	private int sizey;
+	private int sizex;
 
-	public HorzBarGraph(int sizex, int sizey, float x, float y, float weight, Font f) {
-		super(sizex, sizey, x, y, 0, 0, weight);
+	public HorzBarGraph(int sizex, int sizey, float weight, Font f) {
+		this.weight = weight;
+		this.sizex = sizex;
+		this.sizey = sizey;
 		this.percent = 0;
 		this.f = f;
 	}
@@ -29,18 +34,13 @@ public class HorzBarGraph extends Container {
 		this.label = label;
 	}
 
-	public void update(Input i, int mx, int my, int delta) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		super.update(i, mx, my, delta);
-	}
-
-	public void draw(Graphics surface) {
+	public void draw(Graphics surface, int xx, int yy, Color c) {
 		surface.setLineWidth(weight);
-		surface.setColor(Color.red.darker(0.5f));
-		surface.fillRect(x, y, sizex, sizey);
-		surface.setColor(Color.red);
-		surface.fillRect(x, y, (int) sizex * percent, sizey);
-		surface.setColor(Color.white);
-		f.drawString(this.x + 2, this.y + 3, "shuggy"); /* TODO: figure out how to color text properly */
+		surface.setColor(c.darker(0.5f));
+		surface.fillRect(xx, yy, sizex, sizey);
+		surface.setColor(c);
+		surface.fillRect(xx, yy, (int) sizex * percent, sizey);
+		f.drawString(xx + 2, yy + 3, label, Color.black);
 
 	}
 

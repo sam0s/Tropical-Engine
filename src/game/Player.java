@@ -13,14 +13,17 @@ import org.newdawn.slick.state.transition.Transition;
 
 public class Player extends OverworldEntity {
 	int hp = 5;
+	int maxhp = 5;
 	Image combat_portrait;
+	HorzBarGraph healthBar;
 
-	
-	
 	public Player(float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		super("mike", x, y, s);
 		this.combat_portrait = new Image("gfx\\enemysprites\\mike.png");
-		
+		healthBar = new HorzBarGraph(200, 32, 2, StateGame.f_16);
+		healthBar.set_label("HP: " + hp + " / " + maxhp);
+		healthBar.set_percent(5, 5);
+
 	}
 
 	public void setPlayerAnim(String pa) {
@@ -49,18 +52,21 @@ public class Player extends OverworldEntity {
 
 	}
 
-	public void action() {
+	// returns true if space is clear
+	public boolean action() {
 		if (StateGame.currentText.length() == 0) {
 			for (NPC d : StateGame.npcs) {
 				if (d != null) {
 					if (d.alert == 1) {
 						StateGame.currentPortrait = d.portrait;
 						StateGame.currentText = d.textList[d.state];
-						d.state++;
+						return false;
 					}
 
 				}
 			}
+			System.out.println("none");
+			return true;
 		} else {
 
 			if (StateGame.textCursor < StateGame.currentText.length()) {
@@ -69,11 +75,11 @@ public class Player extends OverworldEntity {
 				for (int i = (int) StateGame.textCursor; i < StateGame.currentText.length(); i++) {
 					if (StateGame.currentText.charAt(i) == '&') {
 						StateGame.textCursor = i - 1;
-						return;
+						return false;
 					}
 				}
 				StateGame.textCursor = StateGame.currentText.length();
-				return;
+				return false;
 			}
 
 			// reset cursor
@@ -86,8 +92,8 @@ public class Player extends OverworldEntity {
 
 			// move to next text segment!
 			StateGame.currentText = StateGame.nextText;
-
 		}
+		return false;
 
 	}
 }

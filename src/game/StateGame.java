@@ -1,25 +1,33 @@
 package game;
 
 import java.awt.FontFormatException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class StateGame extends BasicGameState {
+public class StateGame extends game.BasicGameState implements KeyListener {
 	public static Enemy currentEnemy = null;
 	int[][] cur_map;
+	Vector<Integer> keys;
 	static int[] collidables;
 	static SpriteSheet island;
 	static Animation character;
 	static Player mike;
+
+	Menu currentMenu;
+	Menu overworldMenu;
 
 	static String currentText = "";
 	static float textCursor = 0;
@@ -28,14 +36,8 @@ public class StateGame extends BasicGameState {
 
 	java.awt.Font fontRaw = null;
 	public static Font f_32, f_18, f_24, f_16, f_14;
-	public TrueTypeFont f_tt;
-
 	static Image textBorder;
-	static Image combatBorder;
 	static Image alert;
-
-	static HorzBarGraph enemyHealth;
-	static HorzBarGraph playerHealth;
 
 	// Calculated using real game
 	float speed = 0.063f;
@@ -53,17 +55,17 @@ public class StateGame extends BasicGameState {
 	static NPC[] npcs = new NPC[10];
 	public static Image currentPortrait;
 	public static Image currentPortraitBack;
+	static Image cursorSprite;
 
-	public static final int MENU_BAR_HEIGHT = 68;
-	public static final Color win_inner = new Color(40, 40, 40, 225);
-	public static final Color win_outer = Color.orange;
-	public static final Color clear = new Color(0, 0, 0, 0);
+	StateBasedGame psbg;
+	GameContainer gc;
+
 	String area = "CISLAND";
-	
-	public static String addChar(String str, char ch, int position) {
-	    return str.substring(0, position) + ch + str.substring(position);
+
+	public void startBattle() {
+		psbg.enterState(1);
 	}
-	
+
 	public void init_fonts() {
 		try {
 			fontRaw = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new java.io.File("TerminusTTF-Bold-4.47.0.ttf"));
@@ -75,7 +77,6 @@ public class StateGame extends BasicGameState {
 			fontRaw = new java.awt.Font("Default", 0, 28);
 		}
 
-		f_tt = new TrueTypeFont(fontRaw.deriveFont(32f), true);
 		f_32 = new TrueTypeFont(fontRaw.deriveFont(32f), true);
 		f_24 = new TrueTypeFont(fontRaw.deriveFont(24f), true);
 		f_18 = new TrueTypeFont(fontRaw.deriveFont(18f), true);
@@ -116,20 +117,6 @@ public class StateGame extends BasicGameState {
 		textBorder.draw(7, 430);
 
 		f_32.drawString(246, 470, currentText.substring(0, (int) textCursor));
-	}
-
-	public void drawCombat(Graphics g) {
-		g.setColor(Color.black);
-		g.fillRect(45, 45, 1190, 630);
-		currentEnemy.draw(g);
-		g.setColor(Color.white);
-		g.setFont(StateGame.f_32);
-		g.drawString("Blind Willie", 400, 370);
-		mike.portrait.draw(50, 200);
-		g.fillRect(65, 500, 1150, 170);
-		combatBorder.draw(35, 32);
-		enemyHealth.draw(g);
-		g.setColor(Color.white);
 	}
 
 	public int char_to_id(int c) {
@@ -209,20 +196,21 @@ public class StateGame extends BasicGameState {
 	// INIT INIT INIT INIT INIT INIT INIT
 	// ***********************************************************
 	@Override
-	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		init_fonts();
+		psbg = arg1;
+		this.gc = gc;
 		alert = new Image("noti.png");
 		currentPortrait = new Image("gfx\\por_mike.png");
 		textBorder = new Image("gfx\\ropeborder.png");
-		combatBorder = new Image("gfx\\ropeborder_combat.png");
+		cursorSprite = new Image("gfx\\cursor.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
-		// currentEnemy = new Enemy(1);
-		KeyboardControls kc = new KeyboardControls(this);
+		currentEnemy = new Enemy(1);
+		overworldMenu = new Menu(32, 32);
+		currentMenu = overworldMenu;
 
-		enemyHealth = new HorzBarGraph(200, 32, 150, 100, 2, f_16);
-		playerHealth = new HorzBarGraph(32, 100, 32, 32, 2, f_16);
+		this.keys = new Vector<Integer>();
 
-		arg0.getInput().addKeyListener(kc);
 		try {
 			mike = new Player(20, 18, this);
 		} catch (FileNotFoundException e1) {
@@ -242,7 +230,7 @@ public class StateGame extends BasicGameState {
 	// ***********************************************************
 
 	@Override
-	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
+	public void render(GameContainer gc, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.scale(Game.SCALE, Game.SCALE);
 		g.translate(vp_x, vp_y);
 
@@ -277,9 +265,8 @@ public class StateGame extends BasicGameState {
 		g.translate(-vp_x, -vp_y);
 		g.scale((float) 1 / (Game.SCALE), (float) 1 / (Game.SCALE));
 
-		if (currentEnemy != null) {
-			drawCombat(g);
-
+		if (currentMenu != null) {
+			currentMenu.draw(g);
 		}
 
 		if (currentText.length() > 0) {
@@ -294,6 +281,25 @@ public class StateGame extends BasicGameState {
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
 
 		// could be a better way to do this? (move this to level load will work but do it later)
+		for (int k : keys) {
+
+			switch (k) {
+			case 1: /* escape */
+				break;
+			case KeyboardControls.left_bind:
+				StateGame.mike.move_target(-1, 0);
+				break;
+			case KeyboardControls.right_bind:
+				StateGame.mike.move_target(1, 0);
+				break;
+			case KeyboardControls.up_bind:
+				StateGame.mike.move_target(0, -1);
+				break;
+			case KeyboardControls.down_bind:
+				StateGame.mike.move_target(0, 1);
+				break;
+			}
+		}
 		for (OverworldEntity ent : npcs) {
 			if (ent != null) {
 				try {
@@ -317,7 +323,50 @@ public class StateGame extends BasicGameState {
 	}
 
 	@Override
+	public void keyPressed(int arg0, char arg1) {
+		if (currentMenu != null) {
+			return;
+		}
+		System.out.println(String.format("%d %c", arg0, arg1));
+
+		keys.addElement(arg0);
+	}
+
+	@Override
+	public void keyReleased(int arg0, char arg1) {
+		keys.removeIf(n -> ((Integer) n.intValue() == arg0));
+
+		if (currentMenu != null) {
+			overworldMenu.keyPressed(arg0, this);
+			return;
+		}
+		switch (arg0) {
+		case KeyboardControls.action_bind:
+			if (StateGame.mike.action()) {
+				currentMenu = overworldMenu;
+			}
+			// startBattle();
+			break;
+		}
+	}
+
+	@Override
 	public int getID() {
 		return 0;
+	}
+
+	@Override
+	public void actionPerformed(int action) {
+		System.out.println(action);
+		switch (action) {
+		case 0:
+			currentMenu = null;
+			break;
+		case 3:
+			this.gc.exit();
+			break;
+
+		}
+
 	}
 }
