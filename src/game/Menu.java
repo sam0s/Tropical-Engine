@@ -17,7 +17,7 @@ public class Menu {
 		this.x = x;
 		this.y = y;
 
-		items = new String[] { "Resume", "Inventory", "Options", "Quit" };
+		items = new String[] { "Resume", "Inventory", "Options", "Quit"};
 		this.sizey = 32 + items.length * 32;
 		this.sizex = 200;
 
@@ -52,9 +52,10 @@ public class Menu {
 		g.setColor(Color.white);
 		g.setLineWidth(4);
 		g.drawRect(x, y, sizex, sizey);
-
+		
 		int i = 0;
 		for (String a : items) {
+			g.setFont(StateGame.f_24);
 			g.drawString(a, x + 64, y + 16 + i++ * 32);
 		}
 

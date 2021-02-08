@@ -13,24 +13,37 @@ public class Enemy {
 	Image portrait;
 	String name;
 	HorzBarGraph healthBar;
-	int hp = 5;
-	int maxhp = 5;
+	int currentHP;
+
+	int STR = 40;
+	int AGI = 30;
+	int HP = 30;
+	int LK = 0;
 
 	public Enemy(int id) throws SlickException {
+
 		portrait = new Image("gfx\\enemysprites\\" + id + ".png");
-		healthBar = new HorzBarGraph(200, 32, 2, StateGame.f_16);
-		healthBar.set_label("HP: " + hp + " / " + maxhp);
-		healthBar.set_percent(5, 5);
 
 		Scanner reader;
 		try {
 			reader = new Scanner(new File("G_DATA\\enemy\\" + id + ".txt"));
 			name = reader.nextLine();
+			STR = reader.nextInt();
+			AGI = reader.nextInt();
+			HP = reader.nextInt();
+
+			System.out.println("I'm a  " + name + " i have " + STR + " strength, and " + AGI + " agiligty and " + HP + " health.");
 
 			reader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		currentHP = HP;
+		healthBar = new HorzBarGraph(200, 32, 2, StateGame.f_16);
+		healthBar.set_label("HP: " + currentHP + " / " + HP);
+		healthBar.set_percent(currentHP, HP);
+
 	}
 
 	public void draw(Graphics g, int x, int y) {
@@ -40,6 +53,19 @@ public class Enemy {
 		portrait.draw(x, y);
 		g.drawString(name, x, y + portrait.getHeight() + 40);
 		healthBar.draw(g, x, y + portrait.getHeight() + 90, Color.red);
+
+	}
+
+	public void hit(int dmgTotal) {
+		currentHP -= dmgTotal;
+		if (currentHP >= 1) {
+			healthBar.set_label("HP: " + currentHP + " / " + HP);
+			healthBar.set_percent(currentHP, HP);
+		} else {
+			healthBar.set_label("HP: " + currentHP + " / " + HP);
+			healthBar.set_percent(0, HP);
+			System.out.println("ENEMY IS DEAD YOU WIN BOSSMAN");
+		}
 
 	}
 

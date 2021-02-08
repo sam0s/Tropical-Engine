@@ -12,17 +12,26 @@ import org.newdawn.slick.state.transition.FadeOutTransition;
 import org.newdawn.slick.state.transition.Transition;
 
 public class Player extends OverworldEntity {
-	int hp = 5;
-	int maxhp = 5;
+	
 	Image combat_portrait;
 	HorzBarGraph healthBar;
+
+	int LEVEL = 10;
+	int STR = 35;
+	int AGI = 31;
+	int HP = 54;
+	int currentHP = HP;
+	int LK = 0;
+	
+	int weaponDamage = 2;
+	
 
 	public Player(float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		super("mike", x, y, s);
 		this.combat_portrait = new Image("gfx\\enemysprites\\mike.png");
 		healthBar = new HorzBarGraph(200, 32, 2, StateGame.f_16);
-		healthBar.set_label("HP: " + hp + " / " + maxhp);
-		healthBar.set_percent(5, 5);
+		healthBar.set_label("HP: " + currentHP + " / " + HP);
+		healthBar.set_percent(currentHP, HP);
 
 	}
 
@@ -49,6 +58,19 @@ public class Player extends OverworldEntity {
 
 		x = tx;
 		y = ty;
+
+	}
+	
+	public void hit(int dmgTotal) {
+		currentHP -= dmgTotal;
+		if (currentHP >= 1) {
+			healthBar.set_label("HP: " + currentHP + " / " + HP);
+			healthBar.set_percent(currentHP, HP);
+		} else {
+			healthBar.set_label("HP: " + currentHP + " / " + HP);
+			healthBar.set_percent(0, HP);
+			System.out.println("YOU IS DEAD ENEMY WIN BOSSMAN");
+		}
 
 	}
 

@@ -205,7 +205,7 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 		textBorder = new Image("gfx\\ropeborder.png");
 		cursorSprite = new Image("gfx\\cursor.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
-		currentEnemy = new Enemy(1);
+		currentEnemy = new Enemy(0);
 		overworldMenu = new Menu(32, 32);
 		currentMenu = overworldMenu;
 
@@ -328,7 +328,6 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 			return;
 		}
 		System.out.println(String.format("%d %c", arg0, arg1));
-
 		keys.addElement(arg0);
 	}
 
@@ -345,7 +344,6 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 			if (StateGame.mike.action()) {
 				currentMenu = overworldMenu;
 			}
-			// startBattle();
 			break;
 		}
 	}
@@ -361,6 +359,9 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 		switch (action) {
 		case 0:
 			currentMenu = null;
+			break;
+		case 1:
+			startBattle();
 			break;
 		case 3:
 			this.gc.exit();
