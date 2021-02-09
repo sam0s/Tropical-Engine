@@ -205,7 +205,9 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 		textBorder = new Image("gfx\\ropeborder.png");
 		cursorSprite = new Image("gfx\\cursor.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
-		currentEnemy = new Enemy(0);
+		
+		currentEnemy = new Enemy(2);
+		
 		overworldMenu = new Menu(32, 32);
 		currentMenu = overworldMenu;
 

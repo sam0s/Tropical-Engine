@@ -7,11 +7,14 @@ import org.newdawn.slick.state.BasicGameState;
 
 public class BattleMenu extends Menu {
 
+	public boolean over;
+
 	public BattleMenu(int x, int y) {
 		super(x, y);
 		this.items = new String[] {"Attack","Items","Special","Run"};
 		this.sizey = 32 + items.length * 32;
 		this.sizex = 200;
+		this.over=false;
 	}
 	
 	public void draw(Graphics g) {
@@ -24,6 +27,12 @@ public class BattleMenu extends Menu {
 		}
 		StateGame.cursorSprite.draw(x + 20, y + 14 + selection * 32);
 
+	}
+	
+
+	public void won() {
+		this.items = new String[] {"Return"};
+		this.over=true;
 	}
 	
 }

@@ -56,7 +56,7 @@ public class Enemy {
 
 	}
 
-	public void hit(int dmgTotal) {
+	public boolean hit(int dmgTotal) {
 		currentHP -= dmgTotal;
 		if (currentHP >= 1) {
 			healthBar.set_label("HP: " + currentHP + " / " + HP);
@@ -65,7 +65,9 @@ public class Enemy {
 			healthBar.set_label("HP: " + currentHP + " / " + HP);
 			healthBar.set_percent(0, HP);
 			System.out.println("ENEMY IS DEAD YOU WIN BOSSMAN");
+			return true;
 		}
+		return false;
 
 	}
 
