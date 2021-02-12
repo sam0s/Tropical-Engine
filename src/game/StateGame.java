@@ -32,12 +32,13 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 	static String currentText = "";
 	static float textCursor = 0;
 	static String nextText = "";
-	static double textSpeed = 0.5;
+	static double textSpeed = 0.02;
 
 	java.awt.Font fontRaw = null;
 	public static Font f_32, f_18, f_24, f_16, f_14;
 	static Image textBorder;
 	static Image alert;
+	static int deltaAmt = 1;
 
 	// Calculated using real game
 	float speed = 0.063f;
@@ -106,7 +107,7 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 				System.out.println(nextText);
 				textCursor = currentText.length();
 			}
-			textCursor += textSpeed;
+			textCursor += (textSpeed * deltaAmt) % 0.8;
 		}
 		currentPortraitBack.draw(76, 473);
 		if (currentText.charAt(0) == ' ') {
@@ -181,6 +182,7 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 		}
 		Scanner scanner = new Scanner(new File(area + "\\" + fname + ".lda"));
 		island = new SpriteSheet(new Image(scanner.nextLine()), 32, 32);
+
 		int npn = Integer.parseInt(scanner.nextLine());
 		island.setFilter(Image.FILTER_NEAREST);
 		if (npn > 0) {
@@ -205,9 +207,7 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 		textBorder = new Image("gfx\\ropeborder.png");
 		cursorSprite = new Image("gfx\\cursor.png");
 		currentPortraitBack = new Image("gfx\\porback_desert.png");
-		
-		currentEnemy = new Enemy(2);
-		
+
 		overworldMenu = new Menu(32, 32);
 		currentMenu = overworldMenu;
 
@@ -280,8 +280,8 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 	}
 
 	@Override
-	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
-
+	public void update(GameContainer arg0, StateBasedGame arg1, int delta) throws SlickException {
+		deltaAmt = delta;
 		// could be a better way to do this? (move this to level load will work but do it later)
 		for (int k : keys) {
 
@@ -302,6 +302,7 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 				break;
 			}
 		}
+
 		for (OverworldEntity ent : npcs) {
 			if (ent != null) {
 				try {
@@ -321,6 +322,11 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 
 		vp_x = 190 + 120 - (mike.x * 32);
 		vp_y = 50 + 111 - (mike.y * 32);
+
+		if (currentEnemy != null) {
+			this.keys = new Vector<Integer>();
+			startBattle();
+		}
 
 	}
 
@@ -363,7 +369,6 @@ public class StateGame extends game.BasicGameState implements KeyListener {
 			currentMenu = null;
 			break;
 		case 1:
-			startBattle();
 			break;
 		case 3:
 			this.gc.exit();

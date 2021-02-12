@@ -18,10 +18,9 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 	float anim_offsety = 0;
 	boolean fighting = false;
 	int fightAnimPhase = 0;
+	String[] log = { "", "", "", "", "" };
 
 	Animation slash;
-
-	String[] log = { "", "", "", "", "" };
 
 	private StateBasedGame psbg;
 	private GameContainer pgc;
@@ -57,7 +56,9 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 			slash.draw(50, 200);
 		}
 
-		StateGame.currentEnemy.draw(g, 965 + (int) anim_offsetx, 50 + (int) anim_offsety);
+		if (StateGame.currentEnemy != null) {
+			StateGame.currentEnemy.draw(g, 965 + (int) anim_offsetx, 50 + (int) anim_offsety);
+		}
 
 	}
 
@@ -89,6 +90,19 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 	// ***********************************************************
 
 	@Override
+	public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+		dmg_player = 0;
+		dmg_enemy = 0;
+
+		anim_offsetx = 0;
+		anim_offsety = 0;
+		fighting = false;
+		fightAnimPhase = 0;
+		log = new String[] { "", "", "", "", "" };
+		battMenu = new BattleMenu(100, 509);
+	}
+
+	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		backdrop.draw(36, 36);
 		drawCombat(g);
@@ -104,6 +118,7 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int delta) throws SlickException {
 		if (fighting) {
+
 			if (fightAnimPhase == 0) {
 				StateGame.mike.attack.start();
 
@@ -117,13 +132,14 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 			}
 			if (fightAnimPhase == 2) {
 				addCombatText("player does " + dmg_player);
-				fightAnimPhase++;
+
 				if (StateGame.currentEnemy.hit(dmg_player)) {
 					battMenu.won();
 					addCombatText("PLAYER WINS! XP GAIN!");
 					fighting = false;
 					fightAnimPhase = 0;
 				}
+				fightAnimPhase++;
 			}
 
 			// HIT
@@ -176,7 +192,9 @@ public class BattleState extends game.BasicGameState implements KeyListener {
 				break;
 			case 0:
 				if (battMenu.over == true) {
+					StateGame.currentEnemy = null;
 					psbg.enterState(0);
+					break;
 				}
 				int a = combatTurn();
 				if (a == 1) {

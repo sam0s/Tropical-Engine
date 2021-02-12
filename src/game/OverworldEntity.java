@@ -27,7 +27,7 @@ public class OverworldEntity {
 	String[] textList = new String[20];
 	StateGame s;
 	// Calculated using real game
-	float speed = 0.063f;
+	float speed = 0.0045f;
 
 	public OverworldEntity(String identity, float x, float y, StateGame s) throws SlickException, FileNotFoundException {
 		this.s = s;
@@ -107,7 +107,7 @@ public class OverworldEntity {
 	public void updateMovement() throws FileNotFoundException, SlickException {
 		if (x != tx || y != ty) {
 			if (x < tx) {
-				x += speed;
+				x += speed * StateGame.deltaAmt;
 				if (x >= tx) {
 					stop();
 				}
@@ -115,7 +115,7 @@ public class OverworldEntity {
 			}
 
 			if (x > tx) {
-				x -= speed;
+				x -= speed * StateGame.deltaAmt;
 				if (x <= tx) {
 					stop();
 				}
@@ -123,7 +123,7 @@ public class OverworldEntity {
 			}
 
 			if (y < ty) {
-				y += speed;
+				y += speed * StateGame.deltaAmt;
 				if (y >= ty) {
 					stop();
 				}
@@ -131,7 +131,7 @@ public class OverworldEntity {
 			}
 
 			if (y > ty) {
-				y -= speed;
+				y -= speed * StateGame.deltaAmt;
 				if (y <= ty) {
 					stop();
 				}

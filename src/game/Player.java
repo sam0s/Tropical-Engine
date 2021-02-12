@@ -51,7 +51,8 @@ public class Player extends OverworldEntity {
 
 	public void stop() throws SlickException, FileNotFoundException {
 		this.moving = false;
-		System.out.println(Arrays.toString(s.dests));
+
+		// System.out.println(Arrays.toString(s.dests));
 		int t = s.cur_map[(int) ty][(int) tx];
 
 		// Sub
@@ -65,6 +66,10 @@ public class Player extends OverworldEntity {
 
 		x = tx;
 		y = ty;
+
+		if (Game.getRandomNumberInRange(0, 47) == 0) {
+			StateGame.currentEnemy = new Enemy(Game.getRandomNumberInRange(0, 2));
+		}
 
 	}
 
